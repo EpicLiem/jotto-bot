@@ -16,6 +16,7 @@ def main():
     oracle = StrategyOracle(game)
     # Run fictitious play
     fp = FictitiousPlay(game, oracle, NUM_ITERATIONS)
+    fp.download_from_s3()
     fp.run()
     # Sample a game
     game.reset_state()
