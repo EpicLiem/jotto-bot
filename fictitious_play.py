@@ -52,33 +52,33 @@ class FictitiousPlay:
 
         if self.avg_num_guesses is None:
             self.avg_num_guesses = np.zeros(D)
-            for t in tqdm.tqdm(range(self.iteration + 1, self.num_iterations + 1)):
-                self.iteration = t
+        for t in tqdm.tqdm(range(self.iteration + 1, self.num_iterations + 1)):
+            self.iteration = t
 
-                # Compute the guesser's response to the current hider strategy
-                ing = self.compute_num_guesses_parallel()
-                self.avg_num_guesses = ((t - 1) / t) * self.avg_num_guesses + (1 / t) * ing
+            # Compute the guesser's response to the current hider strategy
+            ing = self.compute_num_guesses_parallel()
+            self.avg_num_guesses = ((t - 1) / t) * self.avg_num_guesses + (1 / t) * ing
 
-                # Compute hider's best response
-                hider_best_response = self.oracle.get_hider_best_response(self.avg_num_guesses)
-                self.oracle.hider_strategy = ((t - 1) / t) * self.oracle.hider_strategy + (1 / t) * hider_best_response
-                self.oracle.update_hider_strategy(self.oracle.hider_strategy)
+            # Compute hider's best response
+            hider_best_response = self.oracle.get_hider_best_response(self.avg_num_guesses)
+            self.oracle.hider_strategy = ((t - 1) / t) * self.oracle.hider_strategy + (1 / t) * hider_best_response
+            self.oracle.update_hider_strategy(self.oracle.hider_strategy)
 
-                # Compute epsilon
-                epsilon = self.compute_epsilon()
-                self.epsilon_history.append(epsilon)
+            # Compute epsilon
+            epsilon = self.compute_epsilon()
+            self.epsilon_history.append(epsilon)
 
-                if epsilon < self.best_epsilon:
-                    self.best_epsilon = epsilon
-                    self.best_iteration = t
+            if epsilon < self.best_epsilon:
+                self.best_epsilon = epsilon
+                self.best_iteration = t
 
-                # Save checkpoints every 100 iterations
-                if t % 100 == 0:
-                    self.save_checkpoint()
+            # Save checkpoints every 25 iterations
+            if t % 25 == 0:
+                self.save_checkpoint()
 
-            # Save the final results
-            self.save_checkpoint()
-            print(f"Best Epsilon: {self.best_epsilon:.4f} at iteration {self.best_iteration}")
+        # Save the final results
+        self.save_checkpoint()
+        print(f"Best Epsilon: {self.best_epsilon:.4f} at iteration {self.best_iteration}")
 
     def save_checkpoint(self):
         """Saves the current state of the training process."""
